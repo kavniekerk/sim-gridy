@@ -33,11 +33,9 @@
        var socket = io()
        socket.on('msg', function(msg){
          var decoded_msg = window.atob(msg) 
-         //console.log(decoded_msg)
          var packets = decoded_msg.split("#")
          packets.forEach(function(entry) {
             var items = entry.split(",")
-            console.log(items)
             var cur_lat = items[0]
             var cur_lng = items[1]
             var cur_date = items[2]
@@ -61,7 +59,6 @@
             });   
 
             if (cur_cnt > 0) {
-               console.log("greater")
                cur_image = outage_image
             }    
             var cur_latlng = new google.maps.LatLng(cur_lat, cur_lng);
