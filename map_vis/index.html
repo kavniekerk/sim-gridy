@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Sim Gridy</title>
+    <style>
+        html, body, #map-canvas {
+          height: 100%;
+          margin: 0px;
+          padding: 0px
+      }
+      </style>
+      <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+      <script src="/socket.io/socket.io.js"></script>
+      <script>
+       var centerLatLng = new google.maps.LatLng(42.3671607, -72.5194465);
+       var outage_image = new google.maps.MarkerImage(
+         "outage.png",
+         null,
+         null,
+         null,
+         new google.maps.Size(15,15)
+       );
+       var good_image = new google.maps.MarkerImage(
+         "power.png",
+         null,
+         null,
+         null,
+         new google.maps.Size(15,15)
+       );
+
+       var socket = io()
+       socket.on('msg', function(msg){
+         var decoded_msg = window.atob(msg) 
+         //console.log(decoded_msg)
+         var packets = decoded_msg.split("#")
+         packets.forEach(function(entry) {
+            var items = entry.split(",")
+            console.log(items)
+            var cur_lat = items[0]
+            var cur_lng = items[1]
+            var cur_date = items[2]
+            var cur_time = items[3]
+            var cur_cnt = items[4]
+            var cur_image = good_image
+
+            var contentStr = '<div id="content">'+
+                     '<div id="siteNotice">'+
+                     '</div>'+
+                     '<h1 id="firstHeading" class="firstHeading">House</h1>'+
+                     '<div id="bodyContent">'+
+                     '<p>Num Outages: ' + cur_cnt + '</p>' +
+                     '<p>Date: ' + cur_date + '</p>' +
+                     '<p>Time: ' + cur_time + '</p>' +
+                     '</div>'+
+                     '</div>';
+
+            var cur_infowindow = new google.maps.InfoWindow({ 
+               content: contentStr
+            });   
+
+            if (cur_cnt > 0) {
+               console.log("greater")
+               cur_image = outage_image
+            }    
+            var cur_latlng = new google.maps.LatLng(cur_lat, cur_lng);
+            var cur_marker = new google.maps.Marker({
+               position: cur_latlng,
+               icon: cur_image,
+               map: map
+            });
+            google.maps.event.addListener(cur_marker, 'click', function() {
+               cur_infowindow.open(map, cur_marker);
+            });
+            cur_marker.setMap(map)
+         })
+       });
+
+      function initialize() {
+        var mapOptions = {
+          zoom: 13,
+          center: centerLatLng
+        }
+        map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+     }
+
+     google.maps.event.addDomListener(window, 'load', initialize);
+  </script>
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+  </body>
+</html>

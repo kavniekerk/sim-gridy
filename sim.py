@@ -19,7 +19,7 @@ city_se = (42.367931,-72.51197)
 # variables for road creation
 num_houses_upper_bound = 30
 num_houses_lower_bound = 1
-prob_road_outage_upper_bound = 50
+prob_road_outage_upper_bound = 50 #changed
 prob_road_horizontal = 50
 prob_add = 50
 road_lat_delta_upper_bound = 0.04 
@@ -119,9 +119,11 @@ def create_houses(num_houses, road_start_point, road_end_point, road_type, road_
            occupent_list=occupentlist
      ) 
      
-     db_house = {"num": house_num_str,
+     db_house = {"time" : gen_time(10),
+        "num": house_num_str,
         "lat": house_lat,
-        "lng": house_lng}
+        "lng": house_lng,
+        "outage_cnt": 0}
      print "        inserting " + str(db_house)
      houses.insert(db_house)
    
@@ -288,6 +290,7 @@ def report_outage(house, occupant_num):
   global events
   print "        ############ OUTAGE from " + str(occupant_num) + " ######## " 
   event = {"time": gen_time(100),
+        "num": house.num,
         "lat": house.lat,
         "lng": house.lng,
         "occupant": occupant_num}
