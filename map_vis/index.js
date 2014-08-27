@@ -23,8 +23,12 @@ db.once('open', function callback() {
 
 function blob_houses() {
  console.log(pc);
- find('final_db', {}, function (err, docs) { 
-   io.emit('msg', docs[0].msg); // send out the blob from the server on
+ find('final_db', {}, function (err, docs) {
+    if (typeof docs[0] !== 'undefined') {
+      io.emit('msg', docs[0].msg); // send out the blob from the server on
+    } else {
+      console.log("packet dropped")  
+    };
  }); 
  pc += 1
 }

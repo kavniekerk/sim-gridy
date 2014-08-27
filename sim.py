@@ -277,7 +277,7 @@ def mod_secs(tm, secs):
     fulldate = fulldate + datetime.timedelta(seconds=secs)
   else:
     fulldate = fulldate - datetime.timedelta(seconds=secs)
-  return fulldate
+  return fulldate.strftime('%s')
 
 def get_switch():
   return random.randint(0,1)
@@ -286,14 +286,15 @@ def gen_time(range):
   offset = random.randint(0, range)
   return mod_secs(datetime.datetime.today(), offset)
 
-def report_outage(house, occupant_num):
+def report_outage(house, occupant_num, truth):
   global events
   print "        ############ OUTAGE from " + str(occupant_num) + " ######## " 
   event = {"time": gen_time(100),
         "num": house.num,
         "lat": house.lat,
         "lng": house.lng,
-        "occupant": occupant_num}
+        "occupant": occupant_num,
+        "truth": truth}
   print "        inserting " + str(event)
   return events.insert(event) 
   
@@ -309,7 +310,7 @@ def update_house(house, road_state):
   for occupent in house.occupentlist:
       if (play_probability(occupent.false_positive_percent) == 0): # give each occupent a chance to cause a false positive
            print "        FALSE POSITIVE by occupent " + str(occupent_cnt) 
-           report_outage(house, occupent_cnt) #TODO think about whether this makes sense 
+           report_outage(house, occupent_cnt, 0) #TODO think about whether this makes sense 
       else:     
            non_reported_occupents.append(occupent)           
       occupent_cnt = occupent_cnt + 1
@@ -327,7 +328,7 @@ def update_house(house, road_state):
           print "              gw owner!" 
           if (play_probability(occupent.phone_plugged_in_percent) == 0): # if an occupent's phone is plugged in...
              print "              plugged in!"
-             report_outage(house, occupent_cnt) #TODO add false negatives
+             report_outage(house, occupent_cnt, 1) #TODO add false negatives
           else:
              print "              not plugged in!"
           if (play_probability(occupent.gw_retention_percent) == 1):
