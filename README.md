@@ -1,10 +1,10 @@
-Sim Gridy
+# Sim Gridy 
 
 This is a work in process simulation for Grid Watch. There are a 
 number of weights you can change around in sim.py.
 
-The flow of this is sim is sim.py fills a mongo table. If you 
-don't want to visualize, you can stop here.
+The flow of this is sim is sim.py fills a mongo table. **If you 
+don't want to visualize, you can stop here.**
 
 To visualize the data run vis.py. This does some processing on the 
 sim data turning relevant variables for visualization into JSON.
